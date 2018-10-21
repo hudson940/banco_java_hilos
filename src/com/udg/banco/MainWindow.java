@@ -7,9 +7,10 @@ package com.udg.banco;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Timer;
+import javax.swing.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,17 +28,42 @@ public class MainWindow extends javax.swing.JFrame  implements Observer{
      */
     private ObservableDemo weatherUpdate;
     private Clock clock;
-    
+    private ArrayList<Cliente> clientes = new ArrayList<Cliente>();
+    private Timer clientTimer;
+   
     public MainWindow() {
         initComponents();
         inicializa();
     }
     
     private void inicializa() {
-        img02.setVisible(false);
-        img03.setVisible(false);
-        img04.setVisible(false);  
-        // instanciar relog 
+        
+        // inicia clientes
+        clientTimer = new Timer(300,  new ActionListener(){
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                Cliente c = new Cliente();
+                clientes.add(c);
+                getContentPane().add(c);
+                c.setBounds(posicionInicial , 100, 40, 50); 
+                c.setLocation(posicionInicial -=30, c.getY());
+                
+                clientsLabel.setText("Clientes: "+clientes.size());
+                
+            } catch(Exception ex){
+                System.out.println(ex.toString());
+            }
+           
+           
+        }
+        });
+        
+        
+        
+        img01.setVisible(false);
+        
+        // instanciar reloj
         clock = new Clock(new ActionListener(){
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -56,12 +82,9 @@ public class MainWindow extends javax.swing.JFrame  implements Observer{
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        clientsLabel = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         img01 = new javax.swing.JLabel();
-        img02 = new javax.swing.JLabel();
-        img03 = new javax.swing.JLabel();
-        img04 = new javax.swing.JLabel();
         img05 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtTransacciones = new javax.swing.JTextArea();
@@ -78,38 +101,25 @@ public class MainWindow extends javax.swing.JFrame  implements Observer{
         getContentPane().add(jLabel1);
         jLabel1.setBounds(180, 10, 480, 60);
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(153, 153, 255));
-        jLabel2.setText("Clientes");
-        getContentPane().add(jLabel2);
-        jLabel2.setBounds(10, 80, 120, 40);
+        clientsLabel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        clientsLabel.setForeground(new java.awt.Color(153, 153, 255));
+        clientsLabel.setText("Clientes: ");
+        getContentPane().add(clientsLabel);
+        clientsLabel.setBounds(10, 80, 120, 40);
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 153, 51));
         jLabel3.setText("Cajera");
         getContentPane().add(jLabel3);
-        jLabel3.setBounds(730, 70, 70, 40);
+        jLabel3.setBounds(700, 40, 70, 40);
 
         img01.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgs/icons8-jajaja-40.png"))); // NOI18N
         getContentPane().add(img01);
-        img01.setBounds(20, 120, 40, 50);
-
-        img02.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgs/icons8-jajaja-40.png"))); // NOI18N
-        getContentPane().add(img02);
-        img02.setBounds(220, 130, 40, 40);
-
-        img03.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgs/icons8-aburrido-48.png"))); // NOI18N
-        img03.setText("jLabel6");
-        getContentPane().add(img03);
-        img03.setBounds(410, 130, 50, 40);
-
-        img04.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgs/icons8-enojado-40.png"))); // NOI18N
-        getContentPane().add(img04);
-        img04.setBounds(590, 130, 40, 40);
+        img01.setBounds(550, 100, 40, 50);
 
         img05.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgs/icons8-mujer-de-negocios-48.png"))); // NOI18N
         getContentPane().add(img05);
-        img05.setBounds(730, 120, 50, 50);
+        img05.setBounds(700, 90, 50, 50);
 
         txtTransacciones.setColumns(20);
         txtTransacciones.setRows(5);
@@ -136,26 +146,33 @@ public class MainWindow extends javax.swing.JFrame  implements Observer{
         setSize(new java.awt.Dimension(828, 538));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-    int posicionInicial = 20;
+    int posicionInicial = 580;
      
     private void btnInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioActionPerformed
         try {
-            img01.setLocation(posicionInicial, img01.getY());
-            MueveCliente mv = new MueveCliente(img01, txtTransacciones, posicionInicial);
-            mv.start();
-            Thread.sleep(3);
-            posicionInicial = mv.getLimite();
-            
-            // iniciar relog
-            new Timer(false).schedule(new TimerTask() {
+            //img01.setLocation(posicionInicial, img01.getY());
+           // MueveCliente mv = new MueveCliente(img01, txtTransacciones, posicionInicial);
+           //mv.start();
+           // Thread.sleep(3);
+            //posicionInicial = mv.getLimite();
+                      
+            // iniciar reloj
+            new java.util.Timer(false).schedule(new TimerTask() {
             @Override
             public void run() {
                 clock.start();
             }
         }, 0);
+            // inicia clientes
+            new java.util.Timer(false).schedule(new TimerTask() {
+            @Override
+            public void run() {
+                clientTimer.start();
+            }
+        }, 0);
             
             
-        } catch (InterruptedException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
       ObservableDemo demo = new ObservableDemo("asoleado");
@@ -237,14 +254,11 @@ public class MainWindow extends javax.swing.JFrame  implements Observer{
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnInicio;
+    private javax.swing.JLabel clientsLabel;
     private javax.swing.JLabel clockLabel;
     private javax.swing.JLabel img01;
-    private javax.swing.JLabel img02;
-    private javax.swing.JLabel img03;
-    private javax.swing.JLabel img04;
     private javax.swing.JLabel img05;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;

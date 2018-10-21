@@ -18,7 +18,7 @@ public class Clock extends Timer{
     private int hour , minutes ,seconds;
             
     /**
-     * Iniciar relog en una hora especifica
+     * Iniciar reloj en una hora especifica
      * @param initHour
      * @param initMin
      * @param initSec
@@ -31,7 +31,7 @@ public class Clock extends Timer{
     }
     
     /**
-     * Iniciar relog a las 9:00
+     * Iniciar reloj a las 9:00
      * @param al
      */
     public Clock(ActionListener al){
@@ -64,5 +64,6 @@ public class Clock extends Timer{
         return this.hour+sMinutes+sSeconds;
         
     }
+    
     
 }
