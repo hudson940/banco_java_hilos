@@ -28,8 +28,8 @@ public class Cliente extends JLabel{
        clock = new Clock(0,0,0, new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent ae) { 
-                System.out.println(timeAwaiting++);
-               if(timeAwaiting>60)
+                timeAwaiting++;
+               if(timeAwaiting>60&&timeAwaiting<210)
                    setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgs/icons8-aburrido-48.png")));
                else if (timeAwaiting>210){
                    setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgs/icons8-enojado-40.png")));
@@ -52,6 +52,10 @@ public class Cliente extends JLabel{
     
     public boolean getIsLost(){
         return isLost;
+    }
+    
+    public void end(){
+        clock.stop();
     }
     
 }

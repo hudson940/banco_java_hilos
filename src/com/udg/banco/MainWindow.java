@@ -8,6 +8,7 @@ package com.udg.banco;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.Timer;
@@ -16,59 +17,75 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
-
 /**
  *
  * @author L-204
  */
-public class MainWindow extends javax.swing.JFrame  implements Observer{
+public class MainWindow extends javax.swing.JFrame implements Observer {
 
     /**
      * Creates new form MainWindow
      */
     private ObservableDemo weatherUpdate;
     private Clock clock;
-    private ArrayList<Cliente> clientes = new ArrayList<Cliente>();
+    public static ArrayList<Cliente> clientes = new ArrayList<Cliente>();
+    private ArrayList<Cajera> cajeras = new ArrayList<Cajera>();
     private Timer clientTimer;
-   
+    private int positionCajera = 90;
+    private Cajera cajera1;
+
     public MainWindow() {
         initComponents();
         inicializa();
     }
-    
+
     private void inicializa() {
-        
-        // inicia clientes
-        clientTimer = new Timer(300,  new ActionListener(){
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            try {
-                Cliente c = new Cliente();
-                clientes.add(c);
-                getContentPane().add(c);
-                c.setBounds(posicionInicial , 100, 40, 50); 
-                c.setLocation(posicionInicial -=30, c.getY());
-                
-                clientsLabel.setText("Clientes: "+clientes.size());
-                
-            } catch(Exception ex){
-                System.out.println(ex.toString());
+        // instanciar cajera 1
+        cajera1 = new Cajera(getContentPane());
+        getContentPane().add(cajera1);
+        cajera1.setBounds(670, 60, 150, 50);
+        cajeras.add(cajera1);
+        cajerasLabel.setText("Cajeras: " + cajeras.size());
+
+        // instanciar clientes
+        clientTimer = new Timer(300, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    Cliente c = new Cliente();
+                    if(clientes.size()>0)clientes.add(clientes.size()-1,c);
+                    else clientes.add(c);
+                    getContentPane().add(c);
+                    c.setBounds(posicionInicial, 100, 40, 50);
+                    c.setLocation(posicionInicial -= 30, c.getY());
+                    clientsLabel.setText("Clientes: " + clientes.size());
+
+                    if (clientes.size() / cajeras.size() >= 6) {
+                        Cajera cajeraX = new Cajera(getContentPane());
+                        getContentPane().add(cajeraX);
+                        cajeraX.setBounds(670, positionCajera += 20, 150, 50);
+                        cajeras.add(cajeraX);
+                        cajerasLabel.setText("Cajeras: " + cajeras.size());
+                        cajeraX.start();
+                    }
+                    
+
+                } catch (Exception ex) {
+                    System.out.println(ex.toString());
+                }
+
             }
-           
-           
-        }
         });
-        
-        
-        
+
         img01.setVisible(false);
-        
+
         // instanciar reloj
-        clock = new Clock(new ActionListener(){
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            clockLabel.setText(clock.time());
-        }
+        clock = new Clock(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clockLabel.setText(clock.time());
+
+            }
         });
     }
 
@@ -83,9 +100,8 @@ public class MainWindow extends javax.swing.JFrame  implements Observer{
 
         jLabel1 = new javax.swing.JLabel();
         clientsLabel = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        cajerasLabel = new javax.swing.JLabel();
         img01 = new javax.swing.JLabel();
-        img05 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtTransacciones = new javax.swing.JTextArea();
         jLabel9 = new javax.swing.JLabel();
@@ -107,19 +123,15 @@ public class MainWindow extends javax.swing.JFrame  implements Observer{
         getContentPane().add(clientsLabel);
         clientsLabel.setBounds(10, 80, 120, 40);
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 153, 51));
-        jLabel3.setText("Cajera");
-        getContentPane().add(jLabel3);
-        jLabel3.setBounds(700, 40, 70, 40);
+        cajerasLabel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        cajerasLabel.setForeground(new java.awt.Color(255, 153, 51));
+        cajerasLabel.setText("Cajeras: ");
+        getContentPane().add(cajerasLabel);
+        cajerasLabel.setBounds(700, 40, 100, 40);
 
         img01.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgs/icons8-jajaja-40.png"))); // NOI18N
         getContentPane().add(img01);
-        img01.setBounds(550, 100, 40, 50);
-
-        img05.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgs/icons8-mujer-de-negocios-48.png"))); // NOI18N
-        getContentPane().add(img05);
-        img05.setBounds(700, 90, 50, 50);
+        img01.setBounds(550, 100, 50, 50);
 
         txtTransacciones.setColumns(20);
         txtTransacciones.setRows(5);
@@ -147,76 +159,76 @@ public class MainWindow extends javax.swing.JFrame  implements Observer{
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
     int posicionInicial = 580;
-     
+
     private void btnInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioActionPerformed
         try {
             //img01.setLocation(posicionInicial, img01.getY());
-           // MueveCliente mv = new MueveCliente(img01, txtTransacciones, posicionInicial);
-           //mv.start();
-           // Thread.sleep(3);
+            // MueveCliente mv = new MueveCliente(img01, txtTransacciones, posicionInicial);
+            //mv.start();
+            // Thread.sleep(3);
             //posicionInicial = mv.getLimite();
-                      
+
             // iniciar reloj
             new java.util.Timer(false).schedule(new TimerTask() {
-            @Override
-            public void run() {
-                clock.start();
-            }
-        }, 0);
+                @Override
+                public void run() {
+                    clock.start();
+                }
+            }, 0);
             // inicia clientes
             new java.util.Timer(false).schedule(new TimerTask() {
-            @Override
-            public void run() {
-                clientTimer.start();
-            }
-        }, 0);
+                @Override
+                public void run() {
+                    clientTimer.start();
+                }
+            }, 0);
+
+            // atender clientes 
+            cajera1.start();
             
-            
+
         } catch (Exception ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
-      ObservableDemo demo = new ObservableDemo("asoleado");
-      demo.addObserver(this);
+        ObservableDemo demo = new ObservableDemo("asoleado");
+        demo.addObserver(this);
         System.out.println(demo.getWeather());
         System.out.println("1");
         demo.setWeather("lluvioso");
-       System.out.println("3");
+        System.out.println("3");
         System.out.println(demo.getWeather());
     }//GEN-LAST:event_btnInicioActionPerformed
 
     @Override
     public void update(Observable o, Object arg) {
         System.out.println("2");
-        weatherUpdate = (ObservableDemo)o;
+        weatherUpdate = (ObservableDemo) o;
         System.out.println(
-                "Weather Report Live. Its "+weatherUpdate.getWeather());
-    
+                "Weather Report Live. Its " + weatherUpdate.getWeather());
+
     }
 
- 
+    class ObservableDemo extends Observable {
 
-  class     ObservableDemo extends Observable
-  {
-    private String weather;
-    public ObservableDemo(String weather)
-    {
-        System.out.println("0");
-	this.weather = weather;
-    }
-    
-    public String getWeather()
-    {
-	    return weather;
-    }
+        private String weather;
 
-    public void setWeather(String weather)
-    {
-	    this.weather = weather;
+        public ObservableDemo(String weather) {
+            System.out.println("0");
+            this.weather = weather;
+        }
+
+        public String getWeather() {
+            return weather;
+        }
+
+        public void setWeather(String weather) {
+            this.weather = weather;
             setChanged();
             notifyObservers();
-            
+
+        }
     }
-  }
+
     /**
      * @param args the command line arguments
      */
@@ -254,12 +266,11 @@ public class MainWindow extends javax.swing.JFrame  implements Observer{
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnInicio;
+    private javax.swing.JLabel cajerasLabel;
     private javax.swing.JLabel clientsLabel;
     private javax.swing.JLabel clockLabel;
     private javax.swing.JLabel img01;
-    private javax.swing.JLabel img05;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea txtTransacciones;
