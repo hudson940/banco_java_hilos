@@ -34,7 +34,6 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     public int positionCajera = 90;
     private Cajera cajera1;
     public static int posicionInicial = 580;
-    
 
     public MainWindow() {
         initComponents();
@@ -54,23 +53,35 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    Cliente c = new Cliente(posicionInicial-30);
-                    if(clientes.size()>0)clientes.add(clientes.size()-1,c);
-                    else clientes.add(c);
+                    // crear cliente y agregarlo al arraylist
+                    Cliente c = new Cliente(posicionInicial - 30);
+                    if (clientes.size() > 0) {
+                        clientes.add(clientes.size() - 1, c);
+                    } else {
+                        clientes.add(c);
+                    }
+                    // agregar cliente al la interfaz gráfica
                     getContentPane().add(c);
+                    // especificar ubicación del cliente
                     c.setBounds(posicionInicial, 100, 40, 50);
                     c.setLocation(posicionInicial -= 30, c.getY());
+
+                    // mostrar total de clientes
                     clientsLabel.setText("Clientes: " + clientes.size());
 
+                    // valida el numero de cajeras necesarias
                     if (clientes.size() / cajeras.size() >= 6) {
-                        Cajera cajeraX = new Cajera(getContentPane(), positionCajera +20);
+                        // crear nueva cajera
+                        Cajera cajeraX = new Cajera(getContentPane(), positionCajera + 20);
                         getContentPane().add(cajeraX);
-                        cajeraX.setBounds(670, positionCajera += 40, 150, 50);
+                        cajeraX.setBounds(670, positionCajera += 60, 150, 50);
+                        // agregar cajera al arraylist
                         cajeras.add(cajeraX);
+                        // actulizar el numera de cajeras
                         cajerasLabel.setText("Cajeras: " + cajeras.size());
-                        cajeraX.start( txtTransacciones);
+                        // iniciar cajera a trabajar
+                        cajeraX.start(txtTransacciones);
                     }
-                    
 
                 } catch (Exception ex) {
                     System.out.println(ex.toString());
@@ -166,7 +177,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         setSize(new java.awt.Dimension(1045, 600));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-    
+
 
     private void btnInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioActionPerformed
         try {
@@ -183,27 +194,22 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                     clock.start();
                 }
             }, 0);
-            // atender clientes 
+
+// atender clientes 
             cajera1.start(txtTransacciones);
-            
+
             // inicia clientes
             new java.util.Timer(false).schedule(new TimerTask() {
                 @Override
                 public void run() {
                     clientTimer.start();
                 }
-            }, 0);            
+            }, 0);
 
         } catch (Exception ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
-        ObservableDemo demo = new ObservableDemo("asoleado");
-        demo.addObserver(this);
-        System.out.println(demo.getWeather());
-        System.out.println("1");
-        demo.setWeather("lluvioso");
-        System.out.println("3");
-        System.out.println(demo.getWeather());
+
     }//GEN-LAST:event_btnInicioActionPerformed
 
     @Override
