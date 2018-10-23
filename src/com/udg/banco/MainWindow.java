@@ -31,8 +31,10 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     public static ArrayList<Cliente> clientes = new ArrayList<Cliente>();
     private ArrayList<Cajera> cajeras = new ArrayList<Cajera>();
     private Timer clientTimer;
-    private int positionCajera = 90;
+    public int positionCajera = 90;
     private Cajera cajera1;
+    public static int posicionInicial = 580;
+    
 
     public MainWindow() {
         initComponents();
@@ -41,7 +43,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
     private void inicializa() {
         // instanciar cajera 1
-        cajera1 = new Cajera(getContentPane());
+        cajera1 = new Cajera(getContentPane(), positionCajera);
         getContentPane().add(cajera1);
         cajera1.setBounds(670, 60, 150, 50);
         cajeras.add(cajera1);
@@ -52,7 +54,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    Cliente c = new Cliente();
+                    Cliente c = new Cliente(posicionInicial-30);
                     if(clientes.size()>0)clientes.add(clientes.size()-1,c);
                     else clientes.add(c);
                     getContentPane().add(c);
@@ -61,12 +63,12 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                     clientsLabel.setText("Clientes: " + clientes.size());
 
                     if (clientes.size() / cajeras.size() >= 6) {
-                        Cajera cajeraX = new Cajera(getContentPane());
+                        Cajera cajeraX = new Cajera(getContentPane(), positionCajera +20);
                         getContentPane().add(cajeraX);
-                        cajeraX.setBounds(670, positionCajera += 20, 150, 50);
+                        cajeraX.setBounds(670, positionCajera += 40, 150, 50);
                         cajeras.add(cajeraX);
                         cajerasLabel.setText("Cajeras: " + cajeras.size());
-                        cajeraX.start();
+                        cajeraX.start( txtTransacciones);
                     }
                     
 
@@ -84,6 +86,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             @Override
             public void actionPerformed(ActionEvent e) {
                 clockLabel.setText(clock.time());
+                bovedaLabel.setText("Saldo Boveda: " + Boveda.getSaldo());
 
             }
         });
@@ -107,6 +110,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         jLabel9 = new javax.swing.JLabel();
         btnInicio = new javax.swing.JButton();
         clockLabel = new javax.swing.JLabel();
+        bovedaLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(null);
@@ -127,7 +131,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         cajerasLabel.setForeground(new java.awt.Color(255, 153, 51));
         cajerasLabel.setText("Cajeras: ");
         getContentPane().add(cajerasLabel);
-        cajerasLabel.setBounds(700, 40, 100, 40);
+        cajerasLabel.setBounds(700, 40, 210, 40);
 
         img01.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgs/icons8-jajaja-40.png"))); // NOI18N
         getContentPane().add(img01);
@@ -138,7 +142,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         jScrollPane1.setViewportView(txtTransacciones);
 
         getContentPane().add(jScrollPane1);
-        jScrollPane1.setBounds(10, 310, 790, 170);
+        jScrollPane1.setBounds(10, 310, 640, 170);
 
         jLabel9.setText("Transacciones");
         getContentPane().add(jLabel9);
@@ -151,14 +155,18 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             }
         });
         getContentPane().add(btnInicio);
-        btnInicio.setBounds(680, 273, 120, 30);
+        btnInicio.setBounds(490, 250, 160, 30);
         getContentPane().add(clockLabel);
         clockLabel.setBounds(370, 200, 90, 30);
 
-        setSize(new java.awt.Dimension(828, 538));
+        bovedaLabel.setText("Saldo Boveda: ");
+        getContentPane().add(bovedaLabel);
+        bovedaLabel.setBounds(20, 200, 180, 30);
+
+        setSize(new java.awt.Dimension(1045, 600));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-    int posicionInicial = 580;
+    
 
     private void btnInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioActionPerformed
         try {
@@ -175,17 +183,16 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                     clock.start();
                 }
             }, 0);
+            // atender clientes 
+            cajera1.start(txtTransacciones);
+            
             // inicia clientes
             new java.util.Timer(false).schedule(new TimerTask() {
                 @Override
                 public void run() {
                     clientTimer.start();
                 }
-            }, 0);
-
-            // atender clientes 
-            cajera1.start();
-            
+            }, 0);            
 
         } catch (Exception ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
@@ -265,6 +272,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel bovedaLabel;
     private javax.swing.JButton btnInicio;
     private javax.swing.JLabel cajerasLabel;
     private javax.swing.JLabel clientsLabel;

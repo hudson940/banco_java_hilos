@@ -22,7 +22,7 @@ public class MueveCliente extends Thread{
     
     public void run() {
         txtTransaccion.append("Una vez lo hago\n");
-        limite = limite + 50;
+        limite = limite + 200;
     }
     
 }
